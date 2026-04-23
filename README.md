@@ -1,7 +1,7 @@
 ## Clase 2 - 21 de abril 2026
 
 ### Diagrama del flujo de Git
-![Flujo de Git](images/flujo-git.jpeg)
+![Flujo de Git](images/Flujo-Git.jpeg)
 
 Git tiene 3 formas de gestionar cada archivo:
 ---
