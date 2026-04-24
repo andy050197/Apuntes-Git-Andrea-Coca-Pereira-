@@ -132,3 +132,108 @@ git commit -m "feat: Add new search feature"
 | `build` | Cambios en el sistema de build |
 | `ci` | Integración continua |
 
+# GITHUB 
+## Clase 3- 22 de abril 2026
+
+---
+![Git Status 4](images/status4.png)
+## ¿Qué es GitHub?
+
+GitHub es una plataforma en la nube y red social para desarrolladores
+que permite alojar, gestionar y colaborar en proyectos de software
+utilizando Git.
+
+### Git vs GitHub
+
+- **Git** — Crea los commits en mi máquina local.
+- **GitHub** — Servidor donde esos commits se almacenan y comparten.
+- GitHub usa Git, pero **no son lo mismo**.
+
+---
+
+## SSH vs HTTPS
+
+### HTTPS 
+Cuando clonás con HTTPS, GitHub te pide autenticarte cada vez
+(usuario, contraseña o token). 
+
+### SSH 
+Configuras una clave en tu PC una sola vez, la registrás en GitHub,
+y nunca más te pide contraseña.
+
+> **Nota: siempre usa SSH.**
+
+---
+
+## Configuración SSH
+
+**Paso 1 — Generar la clave**
+```bash
+ssh-keygen -t ed25519 -C "tu-correo@email.com"
+```
+
+**Paso 2 — Ver tu clave pública**
+```bash
+cat ~/.ssh/id_ed25519.pub
+Copia todo el texto que aparece
+```
+
+**Paso 3 — Registrarla en GitHub**
+
+Perfil → Settings → SSH and GPG Keys → New SSH Key → pegás la clave → Add SSH Key
+
+**Paso 4 — Verificar la conexión**
+```bash
+ssh -T git@github.com
+```
+
+---
+
+## Crear un repositorio en GitHub
+
+1. Vas a `github.com/Tu-user?tab=repositories` haces clic en **New**
+2. Ponés nombre y descripción haces clic en **Create Repository**
+
+---
+
+## Conectar repo local con GitHub
+
+> **Requisito:** ya tienes `git init` y al menos un commit.
+
+```bash
+git remote add origin git@github.com:TuUser/TuRepo.git
+
+git branch -M main
+
+git push -u origin main
+
+```
+
+---
+
+## Clonar un repositorio
+
+```bash
+Con SSH 
+git clone "git@github.com:TuUser/TuRepo.git"
+
+Si clonaste con HTTPS por error:
+git remote set-url origin "git@github.com:TuUser/TuRepo.git"
+
+ver a qué remote está conectado tu repo:
+git remote -v
+```
+
+---
+
+## Push y Pull
+
+```bash
+Subir tus commits a GitHub
+git push origin <rama>
+
+Bajar commits de GitHub
+git pull origin <rama>
+```
+
+---
