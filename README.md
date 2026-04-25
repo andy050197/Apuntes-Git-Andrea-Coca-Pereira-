@@ -237,3 +237,134 @@ git pull origin <rama>
 ```
 
 ---
+
+# Apuntes — Git Clase 4: Remote, SSH Múltiple y Checkout
+
+---
+
+## 1. Git Remote
+
+`git remote` es el comando que gestiona las conexiones entre tu repositorio local y los repositorios remotos (ej. GitHub). Le dice a Git **dónde enviar** o **de dónde traer** información.
+
+### Comandos útiles
+
+| Comando | Descripción |
+|---|---|
+| `git remote -v` | Muestra las URLs exactas a donde apunta el repositorio |
+| `git remote add <apodo> "url"` | Vincula el repo local con uno en la nube |
+| `git remote set-url <apodo> "url"` | Cambia la URL a donde apunta el repositorio |
+
+---
+
+## 2. Múltiples SSH
+
+Cuando tienes **más de una cuenta de GitHub**, necesitas una llave SSH por cuenta. Cada llave es un túnel independiente; si una llave accediera a múltiples cuentas, la seguridad estaría comprometida.
+
+### Pasos para configurar múltiples SSH
+
+**Paso 1 — Generar la nueva llave con un nombre distinto:**
+```bash
+ssh-keygen -t ed25519 -C "micorreo@gmail.com" -f ~/.ssh/id_miname
+```
+
+**Paso 2 — Crear/editar el archivo `~/.ssh/config` para evitar conflictos:**
+```
+# Cuenta Personal (la de siempre)
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+
+# Cuenta secundaria
+Host github-miname
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_miname
+```
+Solo cambia el HostName para evitar confusiones, también cambia lo q es el IdentityFile.
+
+**Paso 3 — Verificar que funciona:**
+```bash
+ssh -T git@github-miname
+```
+
+### ¿Qué significa cada campo del config?
+
+| Campo | Descripción |
+|---|---|
+| `Host` | Apodo/alias de la conexión (lo que escribes después de `git@`) |
+| `HostName` | Dirección real del servidor (siempre `github.com`) |
+| `User` | Usuario del sistema remoto (para GitHub, siempre es `git`) |
+| `IdentityFile` | Ruta exacta a la llave privada que se usará para ese Host |
+
+> **Importante:** Al clonar un repo con la cuenta secundaria, usa el Host correcto:
+> ```bash
+> git clone git@github-miname:usuario/repo.git
+> ```
+
+---
+
+## 3. Configuraciones Locales de Git
+
+cuando tu realizas el push, esos cambios se suben con tu usuario, que lo definiste de manera global, pero que pasa si no queremos subir nuestros cambios con ese usuario, simplemente quitas el ```--global``` y estarías usando un usuario local.
+Comandos:
+```
+git config user.name "Mi nuevo Name"
+git config user.email "micorreo@gmail.com"
+```
+![Git Status 5](images/status5.png)
+---
+
+### Jerarquía de configuraciones (de mayor a menor prioridad)
+```
+Local  (por repositorio)  ← mayor prioridad
+  ↓
+Global (por usuario)
+  ↓
+System (todo el sistema)  ← menor prioridad
+```
+
+---
+
+## 4. Git Checkout
+
+`git checkout` mueve el **HEAD** (el puntero/lector actual) a un punto específico del historial o a una rama distinta.
+
+### ¿Para qué sirve?
+
+- **Inspeccionar** → Ver cómo era el código en un commit antiguo
+- **Restaurar** → Recuperar archivos borrados o modificados
+- **Experimentar** → Probar cambios sin afectar la rama principal
+- **Cambiar de rama** → Saltar de `main` a `desarrollo`, por ejemplo
+
+### ¿Cómo ir y volver de un commit?
+
+```bash
+# Ir a un commit antiguo
+git checkout <hash_antiguo>
+
+# Volver al último commit de la rama
+git checkout <nombre_rama>
+```
+
+Si hiciste un commit en estado detached y no quieres perderlo:
+```bash
+git checkout <hash_commit_creado>
+git checkout -b rama_nueva
+```
+
+## 5. Estado "Detached HEAD"
+
+En condiciones normales, **HEAD apunta a una rama** (que avanza con cada commit). En estado **Detached HEAD**, HEAD apunta directamente a un commit fijo.
+
+Es como ser un **espectador en el pasado**: puedes ver y hacer cambios, pero si te vas sin "encarnar" en una rama, esos cambios se pierden.
+
+---
+
+## 6. Buenas Prácticas del Checkout
+
+| Práctica | Detalle |
+|---|---|
+|  **Limpia tu directorio de trabajo** | Haz commit de los cambios actuales antes de viajar al pasado, o Git no te lo permitirá |
+|  **No trabajes mucho tiempo en Detached HEAD** | Si vas a escribir más de dos líneas, crea una rama directamente |
+|  **Úsalo para aprender** | Hacer checkout a commits de proyectos grandes es excelente para entender cómo evolucionaron |
