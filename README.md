@@ -368,3 +368,84 @@ Es como ser un **espectador en el pasado**: puedes ver y hacer cambios, pero si 
 |  **Limpia tu directorio de trabajo** | Haz commit de los cambios actuales antes de viajar al pasado, o Git no te lo permitirá |
 |  **No trabajes mucho tiempo en Detached HEAD** | Si vas a escribir más de dos líneas, crea una rama directamente |
 |  **Úsalo para aprender** | Hacer checkout a commits de proyectos grandes es excelente para entender cómo evolucionaron |
+
+# Clase 5 - 27 de abril del 2026
+## Ramas y Gitflow Básico
+
+
+## ¿Qué son las Ramas?
+
+Las ramas son una de las principales utilidades de Git para llevar un mejor control del código. Se trata de una **bifurcación del estado del código** que crea un nuevo camino para la evolución del proyecto, en paralelo a otras ramas que se puedan generar.
+
+---
+
+## Comandos de Gestión de Ramas
+
+### `git branch`
+
+Permite gestionar las ramas del proyecto.
+
+| Comando | Descripción |
+|---|---|
+| `git branch` | Lista las ramas disponibles que tengamos |
+| `git branch <rama>` | Crea una rama a partir de la rama actual |
+| `git branch -D <rama>` | Borra la rama |
+
+---
+
+### `git checkout` enfocado en ramas
+
+`git checkout` nos permite ver anteriores commits, ver codigo pasado, entre otro, pero nos enfocaremos en ramas:
+
+| Comando | Descripción |
+|---|---|
+| `git checkout <rama>` | Cambia a otra rama. No debe haber archivos en modified/untracked o staged |
+| `git checkout -b <rama>` | Crea la rama **X** te mueve a ella directamente |
+
+---
+
+### `git checkout` vs `git switch`
+git switch hace lo mismo que git checkout,tambien nos permite crear y movernos directamente a esa rama, pero no puede ir al pasado.
+
+| | `git checkout` | `git switch` |
+|---|---|---|
+| **Uso** | Multipropósito (Ramas, Commits, Archivos) | Especializado únicamente en ramas |
+---
+
+## Gitflow Básico
+
+### ¿Qué es?
+
+Es un **flujo de trabajo (workflow)** que permite trabajar de manera ordenada con ramas, a través de consignas y reglas establecidas. Facilita el trabajo con versiones y la incorporación de nuevos colaboradores al proyecto.
+
+### Ramas principales
+
+| Rama | Descripción |
+|---|---|
+| `main` | Contiene el código en **producción**, es decir es el codigo que funciona. Es la rama por defecto al crear un repositorio. |
+| `develop` | Rama de **pre-producción**. Contiene características que se están probando pero aún no han sido validadas del todo. Es donde más se trabaja en el día a día. |
+
+### Ramas de apoyo
+
+#### `feature/*`
+- **Propósito:** Desarrollar una nueva característica para el proyecto, para ello se crea una rama para esa caracteristica.
+- **Nace de:** `develop`
+- **Muere en:** `develop` (se fusiona y se elimina)
+- **Ejemplos de nombres:**
+  ```
+  feature/sum-function
+  feature/add-search-bar
+  feature/new-form-user
+  ```
+
+#### `release/*`
+- **Propósito:** Preparar el lanzamiento de una nueva versión. Es donde se hacen las pruebas (QA).
+- **Nace de:** `develop`
+- **Muere en:** `develop` y `main`
+
+
+#### `hotfix/*`
+- **Propósito:** Trabajar en cambios imprevistos (parches para bugs en producción). Se crea desde `main` porque `develop` puede tener cambios inestables.
+
+
+---
