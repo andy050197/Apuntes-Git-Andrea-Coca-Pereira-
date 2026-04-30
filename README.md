@@ -449,3 +449,139 @@ Es un **flujo de trabajo (workflow)** que permite trabajar de manera ordenada co
 
 
 ---
+# Clase 7- 29 de abril del 2026
+## Pull Requests (PRs)
+
+Un **Pull Request** (PR) es la forma profesional de trabajar con Git/GitHub. Permite crear una solicitud en el repositorio de GitHub para proponer la unión (_merge_) de tu rama al código base principal, dándole al equipo la oportunidad de revisar y aprobar los cambios antes de integrarlos.
+
+---
+
+## ¿Por qué usar PRs?
+
+Sin PRs, cualquier colaborador puede pushear y mergear código sin avisar.
+Los PRs **obligan al equipo a ver los cambios**, limitan la colaboración y fuerzan el debate y la deliberación. Permiten entender qué se va a poner en marcha, quién lo hará, y presentar opiniones u oponerse al cambio. En resumen: mejor manejo grupal del repositorio.
+
+---
+
+## ¿Cómo crear un PR?
+
+Una vez que hiciste `git push origin rama`, sigue estos pasos en GitHub:
+
+1. Ve a la página principal de tu repositorio en GitHub.
+2. Verás un banner amarillo que dice que tu rama tuvo cambios recientes. Haz clic en **"Compare & pull request"**.
+3. Asegúrate de que el dropdown **base:** apunte a la rama donde quieres mergear (generalmente `develop` o `main`).
+4. Asegúrate de que el dropdown **compare:** apunte a tu rama con los cambios.
+5. Escribe un **título** y una **descripción** explicando qué cambiaste y por qué.
+6. Haz clic en **"Create pull request"**.
+
+A partir de ahí, tu equipo puede revisar los cambios, dejar comentarios y aprobar o pedir modificaciones. Una vez aprobado, se hace clic en **"Merge pull request"** para integrar los cambios.
+
+---
+
+## Flujo de trabajo con PRs
+
+```bash
+1. Situarte en develop y actualizar
+git checkout develop
+git fetch
+git pull origin develop
+
+2. Ir a tu rama (usa -b si la estás creando nueva)
+git checkout -b mi-rama
+
+3. Sincronizar cambios de develop (solo si hubo cambios)
+git merge develop
+
+4. Trabajar en tu rama...
+
+5. Subir cambios (usa -u la primera vez)
+git push -u origin mi-rama
+
+# --- Antes de abrir el PR ---
+
+6. Volver a sincronizar con develop por si hubo cambios nuevos
+git checkout develop
+git fetch
+git checkout mi-rama
+git merge develop
+
+7. Resolver conflictos manualmente si los hay, luego:
+git add .
+git commit
+# Guardar en nano: Ctrl+O → Enter → Ctrl+X
+
+git push origin mi-rama
+
+8. Abrir el PR en GitHub (ver pasos de arriba)
+```
+
+---
+
+## ¿Cómo proteger el repositorio y limitar la colaboración?
+
+Conocer la importancia de los PRs no es suficiente: sin configurar restricciones, los colaboradores aún pueden mergear sin aprobación. Para forzar que todo pase por un PR revisado, hay que crear una **regla de protección de rama**:
+
+1. Ve a tu repositorio en GitHub y entra a **Settings**.
+2. En el menú lateral, haz clic en **Branches**.
+3. En la sección "Branch protection rules", haz clic en **Add rule**.
+4. En el campo **Branch name pattern** escribe el nombre de la rama a proteger (por ejemplo `main` o `develop`).
+5. Activa la opción **"Require a pull request before merging"**.
+6. Activa **"Require approvals"** y elige cuántas aprobaciones se necesitan antes de poder mergear.
+7. Opcionalmente activa **"Dismiss stale pull request approvals when new commits are pushed"** para que si alguien pushea nuevos cambios, las aprobaciones anteriores se invaliden y haya que volver a aprobar.
+8. Haz clic en **Create** o **Save changes**.
+
+A partir de ahí, nadie podrá mergear directamente a esa rama sin pasar por un PR aprobado.
+
+---
+
+## ¿Cómo colaborar sin ser colaborador invitado?
+
+Esto es lo que Andre demostró en clase: se puede contribuir a **cualquier repositorio público sin necesitar invitación**, usando el modelo **Fork & Pull Request**.
+
+Un **fork** es una copia completa del repositorio original en tu propia cuenta de GitHub. Desde ese fork trabajas libremente y luego propones tus cambios al repo original mediante un PR.
+
+### Pasos
+
+**1. Hacer fork**
+
+En el repositorio original, presionar el botón **Fork** (esquina superior derecha). GitHub crea una copia en tu cuenta (`tu-usuario/nombre-repo`).
+
+**2. Clonar tu fork y agregar el remoto upstream**
+
+```bash
+git clone https://github.com/tu-usuario/nombre-repo.git
+cd nombre-repo
+git remote add upstream https://github.com/owner-original/nombre-repo.git
+```
+
+`upstream` es el nombre que le damos al repositorio original. Lo necesitamos para mantener el fork actualizado.
+
+**3. Crear tu rama, trabajar y pushear**
+
+Trabajas normalmente en tu rama y haces push a tu fork, no al original (no tienes acceso de escritura allá).
+
+```bash
+git checkout -b mi-rama
+# ... trabajas ...
+git push -u origin mi-rama
+```
+
+**4. Abrir el PR hacia el repositorio original**
+
+1. Ve a tu fork en GitHub.
+2. Haz clic en **"Compare & pull request"**.
+3. Asegúrate de que **base repository** apunte al repo original y **head repository** sea tu fork.
+4. Escribe título y descripción, y haz clic en **"Create pull request"**.
+
+El dueño recibirá una notificación, revisará los cambios y decidirá si los acepta o pide modificaciones.
+
+**5. Mantener el fork actualizado mientras el PR está abierto**
+
+```bash
+git fetch upstream
+git rebase upstream/main
+# Si hay conflictos: resolverlos → git add <archivo> → git rebase --continue
+git push --force-with-lease
+```
+
+Cualquier nuevo commit que hagas en tu rama se refleja automáticamente en el PR abierto. No necesitas cerrar y abrir uno nuevo.
